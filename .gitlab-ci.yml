@@ -1,0 +1,50 @@
+stages:
+  - test
+  - build
+  - deploy
+
+RunFormat:
+  tags:
+    - 'starcofeel-runner'
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+  stage: test
+  script:
+    - npm install
+    - npm run format:check
+  image: node:18.19.0-alpine3.18
+
+RunLinter:
+  tags:
+    - 'starcofeel-runner'
+  rules:
+    - if: $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+  stage: test
+  script:
+    - npm install
+    - npm run lint
+  image: node:18.19.0-alpine3.18
+
+build-job:
+  tags:
+    - 'starcofeel-runner'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  stage: build
+  script:
+    - echo "Compiling the code..."
+    - echo "Compile complete."
+
+  image: node:18.19.0-alpine3.18
+
+deploy-job:
+  tags:
+    - 'starcofeel-runner'
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  stage: deploy
+  environment: production
+  script:
+    - echo "Deploying application..."
+    - echo "Application successfully deployed."
+  image: node:18.19.0-alpine3.18
